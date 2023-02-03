@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '若依管理系统',
+      title: '生鲜超市进销存管理系统',
       logo: logoImg
     }
   }

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.inventory.mapper.inventoryMapper">
+    
+    <resultMap type="inventory" id="inventoryResult">
+        <result property="id"    column="id"    />
+        <result property="itemId"    column="itemId"    />
+        <result property="itemName"    column="itemName"    />
+        <result property="count"    column="count"    />
+    </resultMap>
+
+    <sql id="selectinventoryVo">
+        select id, itemId, itemName, count from inventory
+    </sql>
+
+    <select id="selectinventoryList" parameterType="inventory" resultMap="inventoryResult">
+        <include refid="selectinventoryVo"/>
+        <where>  
+            <if test="itemId != null  and itemId != ''"> and itemId = #{itemId}</if>
+            <if test="itemName != null  and itemName != ''"> and itemName like concat('%', #{itemName}, '%')</if>
+            <if test="count != null "> and count = #{count}</if>
+        </where>
+    </select>
+    
+    <select id="selectinventoryById" parameterType="Long" resultMap="inventoryResult">
+        <include refid="selectinventoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertinventory" parameterType="inventory" useGeneratedKeys="true" keyProperty="id">
+        insert into inventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">itemId,</if>
+            <if test="itemName != null">itemName,</if>
+            <if test="count != null">count,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="itemId != null">#{itemId},</if>
+            <if test="itemName != null">#{itemName},</if>
+            <if test="count != null">#{count},</if>
+         </trim>
+    </insert>
+
+    <update id="updateinventory" parameterType="inventory">
+        update inventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="itemId != null">itemId = #{itemId},</if>
+            <if test="itemName != null">itemName = #{itemName},</if>
+            <if test="count != null">count = #{count},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteinventoryById" parameterType="Long">
+        delete from inventory where id = #{id}
+    </delete>
+
+    <delete id="deleteinventoryByIds" parameterType="String">
+        delete from inventory where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
